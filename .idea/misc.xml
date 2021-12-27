@@ -3,7 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/itsrdb/Documents/HandSignHelper/app/src/main/res/drawable/round_button.xml" value="0.14635416666666667" />
+        <entry key="..\:/Users/itsrdb/Documents/HandSignHelper/app/src/main/res/drawable/round_button_clicked.xml" value="0.134375" />
+        <entry key="..\:/Users/itsrdb/Documents/HandSignHelper/app/src/main/res/drawable/tv_border.xml" value="0.13541666666666666" />
         <entry key="..\:/Users/itsrdb/Documents/HandSignHelper/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/itsrdb/Documents/HandSignHelper/app/src/main/res/layout/activity_translate.xml" value="0.1421875" />
       </map>
     </option>
   </component>

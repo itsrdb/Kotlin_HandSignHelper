@@ -1,10 +1,14 @@
 package com.itsrdb.handsignhelper
 
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
-import android.widget.Button
-import android.widget.TextView
+import android.widget.*
 import net.gotev.speech.Speech
 import net.gotev.speech.GoogleVoiceTypingDisabledException
 
@@ -13,7 +17,6 @@ import net.gotev.speech.SpeechRecognitionNotAvailable
 import net.gotev.speech.SpeechDelegate
 import java.lang.StringBuilder
 
-
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,10 +24,19 @@ class MainActivity : AppCompatActivity() {
 
         Speech.init(this, getPackageName());
 
-        val btn = findViewById<Button>(R.id.button)
+        val btn = findViewById<ImageButton>(R.id.button)
+        val aslBtn = findViewById<ImageButton>(R.id.asl_button)
         val micView = findViewById<net.gotev.speech.ui.SpeechProgressView>(R.id.progress)
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
 
         btn.setOnClickListener {
+            if (vibrator.hasVibrator()) { // Vibrator availability checking
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.EFFECT_HEAVY_CLICK))
+                } else {
+                    vibrator.vibrate(500) // Vibrate method for below API Level 26
+                }
+            }
             try {
                 Speech.getInstance().startListening(micView, object : SpeechDelegate {
                     override fun onStartOfSpeech() {
@@ -41,14 +53,14 @@ class MainActivity : AppCompatActivity() {
                             str.append(res).append(" ")
                         }
                         Log.i("speech", "partial result: " + str.toString().trim { it <= ' ' })
-                        val tvMain = findViewById<TextView>(R.id.tv_main)
-                        tvMain.text = str.toString()
+                        val tvMain = findViewById<EditText>(R.id.tv_main)
+                        tvMain.setText(str.toString())
                     }
 
                     override fun onSpeechResult(result: String) {
                         Log.i("speech", "result: $result")
-                        val tvMain = findViewById<TextView>(R.id.tv_main)
-                        tvMain.text = result
+                        val tvMain = findViewById<EditText>(R.id.tv_main)
+                        tvMain.setText(result)
                     }
                 })
             } catch (exc: SpeechRecognitionNotAvailable) {
@@ -61,6 +73,19 @@ class MainActivity : AppCompatActivity() {
                 // to redirect the user to the Google App page on Play Store
             } catch (exc: GoogleVoiceTypingDisabledException) {
                 Log.e("speech", "Google voice typing must be enabled!")
+            }
+        }
+
+        aslBtn.setOnClickListener{
+            val intent = Intent(this, TranslatorActivity::class.java)
+            val tvMain = findViewById<EditText>(R.id.tv_main)
+            var str: String? = tvMain.text.toString()
+            if(str.isNullOrEmpty()){
+                Toast.makeText(this, "Translator box cannot be empty", Toast.LENGTH_SHORT).show()
+            }else{
+                intent.putExtra("myString", str)
+                startActivity(intent)
+                finish()
             }
         }
     }
